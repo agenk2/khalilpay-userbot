@@ -2,16 +2,18 @@ import os
 import asyncio
 from flask import Flask, request, jsonify
 from telethon import TelegramClient
+from telethon.sessions import StringSession
 
-# Ganti angka & teks di bawah sesuai kunci dari my.telegram.org Anda
-API_ID = 39948698  # Masukkan API_ID Anda
+API_ID = 39948698  # Masukkan API_ID Anda (angka)
 API_HASH = 'fd34a411b67ab839d2f551e1b88af8eb'  # Masukkan API_HASH Anda
+
+# PASTE STRING SESSION PANJANG DI DALAM TANDA PETIK DI BAWAH INI:
+SESSION_STRING = '1BVtsOLwBu0wpbS1PLWw6OK9FRmS60FSNAarRr4jGDioDOEYhrsd5txkTt8CrI_2iJTZm3QASwu1DdMQZDqz2gI0gpozpBeOLh5FsuYufMJ02wYpdmfJmtjTJxOCPLyFZrdORRVwUbcWnsSTqoZnZsVgQI8hDVGARojvcIKByNL5bnPyE6W-7gCbQ3QsTunfg0G6lqHJ5x-Qu-VCKkvHREal_DeRfTOffOrTu6E25WNInQV8Piud3OJrM3vRp0UeflT7KW-NGRB4In6vTK3aEhFMXx1dDeyG-YIRti8uZs2FODQh6X6-TdHFKpPCTgQPkH4jcSSRGWub0KAluayJ5LrkY2LR_Rwk=' 
 
 app = Flask(__name__)
 
-# Fungsi penanganan pengiriman pesan via Telethon
 async def send_telegram_command(command):
-    async with TelegramClient('khalilpay_session', API_ID, API_HASH) as client:
+    async with TelegramClient(StringSession(SESSION_STRING), API_ID, API_HASH) as client:
         await client.send_message('centermarlindo_bot', command)
 
 @app.route('/')
@@ -27,7 +29,6 @@ def execute_transaction():
         return jsonify({"status": "failed", "message": "Command required"}), 400
 
     try:
-        # Menjalankan loop asyncio baru setiap kali ada request transaksi
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         loop.run_until_complete(send_telegram_command(command))
